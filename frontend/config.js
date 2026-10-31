@@ -7,7 +7,7 @@ const CONFIG = {
   API_BASE_URL: "",
   // Links below are filled in by the owner after GitHub / report / PPT / YouTube are published.
   GITHUB_URL: "https://github.com/rafaqatali-dev/AI-Car-Parts-Detection-YOLOv8",
-  REPORT_URL: "",
+ REPORT_URL: "https://github.com/rafaqatali-dev/AI-Car-Parts-Detection-YOLOv8/blob/main/docs/AI_Car_Parts_Detection_YOLOv8_Semester_Report.pdf",
   PRESENTATION_URL: "",
   YOUTUBE_URL: ""
 };
