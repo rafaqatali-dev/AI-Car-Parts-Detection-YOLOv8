@@ -1,0 +1,3 @@
+/* Small custom styles on top of Bootstrap. The layout is Bootstrap 5 (CDN). */
+.note { font-size: 0.9rem; color: #555; }
+img { max-width: 100%; height: auto; }

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pakistani Car Damage AI — Demo</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script src="config.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-dark bg-dark">
+  <div class="container">
+    <span class="navbar-brand mb-0 h1">Pakistani Car Damage AI</span>
+    <span class="navbar-text text-light">Car detection + car-part segmentation demo</span>
+  </div>
+</nav>
+
+<main class="container my-4">
+  <div class="alert alert-warning" role="alert">
+    <strong>Honest status — please read:</strong> whole-car detection runs on the generic COCO YOLOv8n
+    detector. Car-part segmentation runs on the real fine-tuned YOLOv8n-seg model
+    (23 classes, 25 epochs, Colab T4) <em>only when the inference API has
+    <code>models/part_detection/best.pt</code></em>. The API is tested locally (see report),
+    but it is <strong>not deployed yet</strong>, so live inference on this page works only after
+    the owner deploys the backend and sets <code>API_BASE_URL</code> in <code>config.js</code>.
+    Until then this page shows example results below — never a simulated live result.
+  </div>
+
+  <div class="d-flex flex-wrap gap-2 mb-4">
+    <span class="badge bg-success">Car detection: implemented</span>
+    <span class="badge bg-success">Part segmentation: implemented (trained model)</span>
+    <span class="badge bg-secondary">Damage detection: NOT IMPLEMENTED</span>
+    <span class="badge bg-secondary">Make / model recognition: NOT IMPLEMENTED</span>
+    <span class="badge bg-secondary">Insurance pricing: NOT IMPLEMENTED</span>
+  </div>
+
+  <section class="card mb-4" id="demo">
+    <div class="card-header"><h2 class="h5 mb-0">Try it — upload a vehicle image</h2></div>
+    <div class="card-body">
+      <label class="form-label" for="apiUrl">API base URL (set in <code>config.js</code>, or type it here for testing):</label>
+      <input class="form-control mb-3" id="apiUrl" type="text" placeholder="https://YOUR-API-URL (set in config.js)">
+      <input class="form-control mb-3" id="fileInput" type="file" accept="image/jpeg,image/png,image/webp">
+      <div class="mb-3"><img id="preview" class="img-fluid rounded" alt=""></div>
+      <button class="btn btn-primary" id="predictBtn">Submit for prediction</button>
+      <p class="mt-3" id="status"></p>
+      <div class="alert alert-danger" id="error" hidden></div>
+      <div id="result" hidden>
+        <h3 class="h5 mt-3">Prediction result</h3>
+        <p id="summary"></p>
+        <p id="notImplemented"></p>
+        <h4 class="h6">Cars detected (generic COCO detector)</h4>
+        <table class="table table-sm table-striped" id="carTable"><tr><th>Label</th><th>Confidence</th><th>Box (x1, y1, x2, y2)</th></tr></table>
+        <h4 class="h6">Parts detected (trained YOLOv8n-seg, 23 classes)</h4>
+        <p id="partStatus"></p>
+        <table class="table table-sm table-striped" id="partTable"><tr><th>Part</th><th>Confidence</th><th>Segmentation mask</th><th>Box (x1, y1, x2, y2)</th></tr></table>
+        <h4 class="h6">Annotated image</h4>
+        <img id="annotated" class="img-fluid rounded border" alt="Annotated result">
+        <p class="note">Blue boxes = car (COCO detector). Green translucent overlays = part segmentation
+        masks from the trained model. Green boxes = part boxes. Masks and boxes come only from model output.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="card mb-4">
+    <div class="card-header"><h2 class="h5 mb-0">Example results — measured, not simulated</h2></div>
+    <div class="card-body">
+      <p>These are real outputs from <code>predict.py</code> with the integrated trained model
+      (31 October 2026, test split images). Re-run <code>predict.py</code> on the same images to reproduce them.</p>
+      <table class="table table-sm table-striped">
+        <tr><th>Test image</th><th>Parts found (confidence)</th></tr>
+        <tr><td>car25 (rear view)</td><td>back_glass 0.906, back_light 0.881, back_bumper 0.880, back_light 0.860</td></tr>
+        <tr><td>car42 (rear view)</td><td>back_bumper 0.939, back_light 0.913, back_glass 0.905, back_light 0.808, back_light 0.383</td></tr>
+        <tr><td>car4 (front view)</td><td>front_glass 0.947, hood 0.915, front_bumper 0.775, front_light 0.773, front_light 0.581, right_mirror 0.268</td></tr>
+      </table>
+      <p class="note">Full JSON for these examples: <code>docs/submission/sample_predictions_colab.json</code>
+      and <code>docs/submission/INTEGRATION_TEST_TRAINED_MODEL.md</code> in the repository.</p>
+    </div>
+  </section>
+
+  <section class="card mb-4">
+    <div class="card-header"><h2 class="h5 mb-0">Evaluation metrics — PRELIMINARY</h2></div>
+    <div class="card-body">
+      <p><strong>PRELIMINARY:</strong> measured on the shipped Carparts-Seg val/test splits.
+      191 cross-split pHash candidate pairs are unresolved, so the test split is not claimed leakage-free.</p>
+      <table class="table table-sm table-striped">
+        <tr><th>Split</th><th>Precision</th><th>Recall</th><th>mAP50 (box)</th><th>mAP50-95 (box)</th><th>mAP50 (mask)</th></tr>
+        <tr><td>Val (401 images)</td><td>0.6016</td><td>0.7921</td><td>0.682</td><td>0.5699</td><td>0.6973</td></tr>
+        <tr><td>Test (276 images)</td><td>0.6285</td><td>0.8188</td><td>0.7082</td><td>0.5948</td><td>0.711</td></tr>
+      </table>
+      <p class="note">Weakest test classes include <code>object</code> 0.000 (only ~12 instances),
+      wheel 0.401 and left_mirror 0.406. Full 23-class table: report, Section 7.2.</p>
+    </div>
+  </section>
+
+  <section class="card mb-4">
+    <div class="card-header"><h2 class="h5 mb-0">Dataset &amp; source code details</h2></div>
+    <div class="card-body">
+      <h3 class="h6">Dataset details</h3>
+      <p>Carparts-Seg: 3,833 images (train 3,156, val 401, test 276), 20,374 polygon annotations,
+      23 part classes, 640×640 images. 135 images have empty label files (quarantined in the
+      Colab training copy only; originals untouched). Original Roboflow project (Gianmarco Russo, 2023)
+      states CC BY 4.0; the curated 3,833-image set has no dataset licence stated — commercial rights
+      are <strong>NOT confirmed</strong>. Academic use with attribution only. Cross-split pHash candidate
+      pairs (191) are still unconfirmed — the test split is NOT claimed leakage-free.</p>
+      <h3 class="h6">Source code details</h3>
+      <p>Training: <code>colab/train_colab.ipynb</code> (YOLOv8n-seg, 2-epoch smoke test, 25-epoch full run,
+      validation, evaluation, Drive export). Inference: <code>predict.py</code> (standalone) and
+      <code>api/main.py</code> (FastAPI). Full code, dataset sources and licence notes are in the GitHub
+      repository (link below, added by the owner after publishing).</p>
+      <h3 class="h6">Links</h3>
+      <ul id="links">
+        <li>GitHub repository: <a id="githubLink" href="#">link to be added by owner</a></li>
+        <li>Project report: <a id="reportLink" href="#">link to be added by owner</a></li>
+        <li>Presentation: <a id="presentationLink" href="#">link to be added by owner</a></li>
+        <li>YouTube voiceover video: <a id="youtubeLink" href="#">link to be added by owner</a></li>
+      </ul>
+    </div>
+  </section>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
