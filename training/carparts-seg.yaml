@@ -1,0 +1,44 @@
+# Corrected training config for Carparts-Seg (TEMPLATE — dataset not included).
+# This is the config used for the shipped model, with the dataset path left
+# as a placeholder. To reproduce training:
+#   1. Download the dataset from the official Ultralytics release
+#      (see ../datasets/README.md) and check its licence yourself.
+#   2. Unzip it so the folders below exist, or edit `path` to point at
+#      your copy.
+#   3. Run from the project root (or adapt the notebook
+#      training/train_colab.ipynb, which generates its own data.yaml):
+#        yolo train data=training/carparts-seg.yaml
+# NOTE: the YAML shipped inside carparts-seg.zip has WRONG split comments
+# (train 3516 / val 276 / test 401); the actual folders are:
+# train 3156, val 401, test 276 images. Use THESE numbers.
+# NOTE: 135 images have empty label files (train 116 / val 12 / test 7).
+# They were quarantined in the Colab training copy only.
+path: datasets/carparts-seg
+train: images/train
+val: images/val
+test: images/test
+nc: 23
+names:
+  0: back_bumper
+  1: back_door
+  2: back_glass
+  3: back_left_door
+  4: back_left_light
+  5: back_light
+  6: back_right_door
+  7: back_right_light
+  8: front_bumper
+  9: front_door
+  10: front_glass
+  11: front_left_door
+  12: front_left_light
+  13: front_light
+  14: front_right_door
+  15: front_right_light
+  16: hood
+  17: left_mirror
+  18: object
+  19: right_mirror
+  20: tailgate
+  21: trunk
+  22: wheel

@@ -1,0 +1,106 @@
+{
+  "model_info": {
+    "car_detector": {
+      "weights": "/home/hatch/workspace/github_submission/yolov8n.pt",
+      "type": "YOLOv8n COCO pretrained (generic, NOT the project model)",
+      "detects": "car only"
+    },
+    "part_model": {
+      "status": "TRAINED",
+      "weights": "/home/hatch/workspace/github_submission/models/part_detection/best.pt",
+      "task": "segment",
+      "class_names": [
+        "back_bumper",
+        "back_door",
+        "back_glass",
+        "back_left_door",
+        "back_left_light",
+        "back_light",
+        "back_right_door",
+        "back_right_light",
+        "front_bumper",
+        "front_door",
+        "front_glass",
+        "front_left_door",
+        "front_left_light",
+        "front_light",
+        "front_right_door",
+        "front_right_light",
+        "hood",
+        "left_mirror",
+        "object",
+        "right_mirror",
+        "tailgate",
+        "trunk",
+        "wheel"
+      ]
+    },
+    "make_model_year": "Unknown (no classifier trained yet)",
+    "damage_type": null,
+    "preprocessing": "YOLO predict, imgsz=640, conf=0.25; image read as-is, no manual edits"
+  },
+  "input_image": "examples/sample_civic_cc0.jpg",
+  "car_detections": [
+    {
+      "label": "car",
+      "confidence": 0.8856,
+      "bbox_xyxy": [
+        1343.1,
+        1398.6,
+        3201.9,
+        2002.9
+      ]
+    },
+    {
+      "label": "car",
+      "confidence": 0.568,
+      "bbox_xyxy": [
+        3164.0,
+        1430.4,
+        3391.0,
+        1724.9
+      ]
+    }
+  ],
+  "part_detections": [
+    {
+      "part": "right_mirror",
+      "confidence": 0.2864,
+      "bbox_xyxy": [
+        3181.8,
+        1426.0,
+        3387.6,
+        1709.9
+      ],
+      "mask_present": true
+    },
+    {
+      "part": "back_left_door",
+      "confidence": 0.2854,
+      "bbox_xyxy": [
+        2126.8,
+        1429.0,
+        2647.6,
+        1872.4
+      ],
+      "mask_present": true
+    },
+    {
+      "part": "back_right_door",
+      "confidence": 0.2653,
+      "bbox_xyxy": [
+        2133.0,
+        1426.9,
+        2669.8,
+        1874.2
+      ],
+      "mask_present": true
+    }
+  ],
+  "summary": {
+    "cars_detected": 2,
+    "parts_detected": 3,
+    "part_model_trained": true
+  },
+  "annotated_image": "/tmp/sub_eval_test/annotated_sample_civic_cc0.jpg"
+}
