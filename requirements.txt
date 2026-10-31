@@ -1,0 +1,19 @@
+# Pinned dependencies for the AI Car Parts Detection submission (CPU only).
+# Install: pip install -r requirements.txt
+# This file is PINNED to the versions live-tested locally on 2026-10-31, so a
+# fresh install does not drift to an untested release.
+# --extra-index-url keeps PyPI as the main index and adds PyTorch's CPU wheel
+# index, so torch/torchvision resolve to the small CPU builds (+cpu) instead
+# of the large CUDA builds. Do NOT replace these with the CUDA builds on a
+# CPU-only machine: they are much larger and will slow or break the install.
+--extra-index-url https://download.pytorch.org/whl/cpu
+fastapi==0.162.0
+uvicorn==0.54.0
+python-multipart==0.0.32
+ultralytics==8.4.193
+torch==2.15.0+cpu
+torchvision==0.29.2+cpu
+opencv-python-headless==5.0.0.93
+Pillow==13.0.0
+numpy==2.5.4
+PyYAML==6.0.3

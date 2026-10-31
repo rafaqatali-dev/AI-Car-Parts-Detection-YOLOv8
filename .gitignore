@@ -1,0 +1,53 @@
+# Git ignore rules for the AI Car Parts Detection submission.
+# Purpose: keep the repo clean, small, and free of private or restricted files.
+# IMPORTANT: the trained weights ARE committed on purpose (see below).
+
+# Python virtual environments
+.venv/
+venv/
+ENV/
+
+# Python caches and bytecode
+__pycache__/
+*.py[cod]
+*.pyc
+
+# Datasets — NEVER committed (licence unconfirmed; see datasets/README.md)
+# Exception: the README explaining the dataset IS committed.
+# (Using datasets/*, not datasets/, because git cannot re-include a file
+# inside an excluded directory.)
+datasets/*
+!datasets/README.md
+
+# Generated / private files
+outputs/
+uploads/
+pilot-results/
+*.log
+*.tmp
+
+# Secrets and local config — never committed (none are needed to run this repo)
+.env
+*.env
+*.pem
+*.key
+id_rsa*
+credentials*.json
+
+# Editor / OS files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Other trained checkpoints (not the shipped model)
+models/*/last.pt
+runs/
+
+# Trained weights — COMMITTED ON PURPOSE (both under GitHub's 100 MB limit):
+#   models/part_detection/best.pt  (7,045,940 bytes, md5 c99271ab36b92d655ea03dc5e1f4cb3a)
+#   yolov8n.pt                     (6,549,796 bytes, md5 95a2449609c73cd69a072b09daaff0cc)
+# Do NOT add models/*/best.pt to this file. If a future .gitignore template
+# excludes weights, add these two negation lines to keep them tracked:
+!models/part_detection/best.pt
+!yolov8n.pt
